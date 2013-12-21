@@ -1,5 +1,5 @@
-from steamkit.steam_base import EMsg
-from steamkit import Util
+from steamedfish.steam_base import EMsg
+from steamedfish import Util
 
 from circuits import Component
 

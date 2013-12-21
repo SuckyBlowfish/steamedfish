@@ -1,0 +1,6 @@
+steamedfish aims to be an easy to use, exetensible framework for interfacing with steam. steamedfish uses the python circuits library for ease of use.
+
+required libraries:
+  * circuits
+  * protobuf
+  * pycrypto 

@@ -1,8 +1,8 @@
 import sys
-from steamkit.steam3 import SteamClient, SteamFriends
-from steamkit.steam3.steam_events import SendFriendMessage, SetPersonaState
-from steamkit.steam_base import EChatEntryType, EMsg, EPersonaState
-from steamkit import Util
+from steamedfish.steam3 import SteamClient, SteamFriends
+from steamedfish.steam3.steam_events import SendFriendMessage, SetPersonaState
+from steamedfish.steam_base import EChatEntryType, EMsg, EPersonaState
+from steamedfish import Util
 from circuits import Debugger, Component
 from circuits.core import handler
 from chatterbotapi import ChatterBotFactory, ChatterBotType
@@ -28,8 +28,8 @@ class SteamEcho(Component):
     @handler('friend_message')
     def _friend_message(self, steamid, chat_entry_type, message):
         if chat_entry_type == EChatEntryType.ChatMsg:
-            self.stimulate_chatter_bot(steamid, message)
             print('[Incoming Friend Message] ' + message)
+            self.stimulate_chatter_bot(steamid, message)
 
     def stimulate_chatter_bot(self, steamid, message):
         if steamid not in self.friend_bots:
