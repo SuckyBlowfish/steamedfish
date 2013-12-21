@@ -20,7 +20,6 @@ class SteamEcho(Component):
     def started(self, *args):
         self.client = SteamClient().register(self)
         self.steam_friends = SteamFriends().register(self)
-        SteamLogger().register(self)
         self.client.connect()
         self.friend_bots = {}
         self.factory = ChatterBotFactory()
@@ -60,4 +59,4 @@ if __name__ == '__main__':
         sys.exit()
     username = sys.argv[1]
     password = sys.argv[2]
-    SteamEcho(username, password).run()
+    (SteamLogger() + SteamEcho(username, password)).run()
