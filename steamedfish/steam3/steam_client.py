@@ -2,10 +2,9 @@ from circuits import Component
 from circuits.net.sockets import TCPClient, Connect, Disconnect
 from circuits.core import handler
 
-import struct
-
 from steamedfish import SteamID, Util
 from steamedfish.steam3 import msg_base
+from steamedfish.steam3.steam_friends import SteamFriends
 from steamedfish.steam3.steam_protocol import SteamProtocol
 from steamedfish.steam3.steam_events import SendMessage, SetPersonaState
 from steamedfish.protobuf import steammessages_clientserver_pb2
@@ -25,6 +24,8 @@ class SteamClient(Component):
         self.session_token = None
         self.server_list = dict()
         self.account_type = None
+
+        self.steam_friends = SteamFriends().register(self)
 
         SteamProtocol().register(self)
 
@@ -65,6 +66,7 @@ class SteamClient(Component):
         if auth_code:
             message.body.auth_code = auth_code
         
+        # TODO: create the actual file
         sentryfile = self.get_sentry_file(username)
         if sentryfile:
             message.body.sha_sentryfile = Util.sha1_hash(sentryfile)
@@ -83,5 +85,3 @@ class SteamClient(Component):
     def _logged_on(self, steamid):
         self.steamid = steamid
         self.fire(SetPersonaState(EPersonaState.Online))
-
-

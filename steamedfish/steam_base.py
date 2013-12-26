@@ -509,6 +509,17 @@ class EDepotFileFlag:
 	Executable = 32
 	Directory = 64
 	CustomExecutable = 128
+
+class EFriendRelationship:
+    NoRelationship = 0
+    Blocked = 1
+    RequestRecipient = 2
+    Friend = 3
+    RequestInitiator = 4
+    Ignored = 5
+    IgnoredFriend = 6
+    SuggestedFriend = 7
+    Max = 8
 	
 class UniverseKeys:
 	Public = bytearray([

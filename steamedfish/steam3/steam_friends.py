@@ -1,16 +1,16 @@
 from steamedfish.protobuf import steammessages_clientserver_pb2
 from steamedfish.steamid import SteamID
 from steamedfish.steam3 import msg_base
-from steamedfish.steam_base import EMsg, EPersonaState
+from steamedfish.steam_base import *
 from steamedfish.util import Util
 from circuits import Component
 from circuits.core import handler
-from steam_events import FriendMessage, SendFriendMessage, SendMessage
+from steam_events import *
 
 get_msg = Util.get_msg
 
 class User():
-    def __init__(self, steamid=None, persona_state=0, player_name=None, friend_relationship=None,
+    def __init__(self, steamid=None, persona_state=0, persona_name=None, friend_relationship=None,
             game_played_id=None, game_played_name=None, persona_state_flags = 0):
         self.steamid = steamid
         self.persona_state = persona_state
@@ -66,22 +66,25 @@ class SteamFriends(Component):
         message.body.message = msg
         self.fire(SendMessage(message), 'steam')
 
-    def _handleClientFriendMsgIncoming(self, msg):
+    def _handle_client_friend_msg_incoming(self, msg):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientFriendMsgIncoming,
                 EMsg.ClientFriendMsgIncoming)
         message.parse(msg)
         self.fire(FriendMessage(message.body.steamid_from, message.body.chat_entry_type, message.body.message))
 
-    def _handleClientFriendsList(self, msg):
+    def _handle_client_friends_list(self, msg):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientFriendsList,
                 EMsg.ClientFriendsList)
         message.parse(msg)
         if not message.body.bincremental:
             self.friends_list = {}
+        # TODO: handle more friend information
         for friend in message.body.friends:
             self.friends_list[friend.ulfriendid] = User(steamid=friend.ulfriendid)
+            if friend.efriendrelationship == EFriendRelationship.RequestInitiator:
+                self.fire(FriendRequest(friend.ulfriendid))
 
-    def _handleClientAccountInfo(self, msg):
+    def _handle_client_account_info(self, msg):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientAccountInfo,
                 EMsg.ClientAccountInfo)
         message.parse(msg)

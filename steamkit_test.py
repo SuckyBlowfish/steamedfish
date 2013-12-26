@@ -19,7 +19,6 @@ class SteamEcho(Component):
 
     def started(self, *args):
         self.client = SteamClient().register(self)
-        self.steam_friends = SteamFriends().register(self)
         self.client.connect()
         self.friend_bots = {}
         self.factory = ChatterBotFactory()
@@ -52,6 +51,10 @@ class SteamEcho(Component):
     @handler('connected')
     def _handle_connected(self):
         self.client.login(self.username, self.password)
+
+    @handler('friend_request')
+    def _handle_friend_request(self, steamid):
+        print('[Friend Request] ' + str(steamid))
 
 if __name__ == '__main__':
     if not len(sys.argv) >= 3:
