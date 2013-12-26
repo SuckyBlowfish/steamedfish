@@ -6,12 +6,12 @@ from circuits.net.sockets import Write
 from circuits.core import Timer, handler
 from circuits import Component, Event
 
-from steamedfish.crypto import CryptoUtil
-from steamedfish.protobuf import steammessages_clientserver_pb2, steammessages_base_pb2
-from steamedfish.steam3.steam_events import Message, SendMessage, LoggedOn
-from steamedfish.steam3 import msg_base
-from steamedfish.steam_base import EMsg, EUniverse, EResult
-from steamedfish import Util, SteamID
+from steamedrice.crypto import CryptoUtil
+from steamedrice.protobuf import steammessages_clientserver_pb2, steammessages_base_pb2
+from steamedrice.steam3.steam_events import ProtocolMessage, SendProtocolMessage, LoggedOn, Connected
+from steamedrice.steam3 import msg_base
+from steamedrice.steam_base import EMsg, EUniverse, EResult
+from steamedrice import Util, SteamID
 
 class ProtocolError(Exception):
     """
@@ -20,11 +20,6 @@ class ProtocolError(Exception):
 
 class Heartbeat(Event):
     pass
-
-class Connected(Event):
-    """
-    Fired when we successfully connect to steam servers and complete the encryption request
-    """
 
 class NetEncryption():
     def __init__(self, key):
@@ -54,7 +49,7 @@ class SteamProtocol(Component):
         emsg_real, = struct.unpack_from('<I', msg)
         emsg = Util.get_msg(emsg_real)
 
-        self.fire(Message(emsg_real, msg), 'steam')
+        self.fire(ProtocolMessage(emsg_real, msg), 'steam')
 
         if emsg == EMsg.ChannelEncryptRequest:
             self.channel_encrypt_request(msg)
@@ -84,7 +79,7 @@ class SteamProtocol(Component):
         response.body.key_size = len(crypted_key)
         response.payload = crypted_key + struct.pack('II', key_crc, 0)
 
-        self.fire(SendMessage(response), 'steam')
+        self.fire(SendProtocolMessage(response), 'steam')
 
     def channel_encrypt_result(self,msg):
         message = msg_base.Message(msg_base.MsgHdr, msg_base.ChannelEncryptResult)
@@ -128,10 +123,10 @@ class SteamProtocol(Component):
     @handler('heartbeat')
     def _heartbeat(self):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientHeartBeat, EMsg.ClientHeartBeat)
-        self.fire(SendMessage(message), 'steam')
+        self.fire(SendProtocolMessage(message), 'steam')
 
-    @handler('send_message', 'steam')
-    def send_message(self, msg):
+    @handler('send_protocol_message', 'steam')
+    def send_protocol_message(self, msg):
         if self.session_id:
             msg.header.session_id = self.session_id
         if self.steamid:

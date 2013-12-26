@@ -5,7 +5,7 @@ from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA 
 from Crypto.Signature import PKCS1_v1_5
 
-from steamedfish.steam_base import UniverseKeys
+from steamedrice.steam_base import UniverseKeys
 
 
 BS = 16

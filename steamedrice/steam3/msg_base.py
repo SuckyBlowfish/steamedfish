@@ -1,7 +1,7 @@
 import struct
 
-from steamedfish.steam_base import EMsg, EUniverse, EResult
-from steamedfish.protobuf import steammessages_base_pb2
+from steamedrice.steam_base import EMsg, EUniverse, EResult
+from steamedrice.protobuf import steammessages_base_pb2
 
 
 class MsgHdr:

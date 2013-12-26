@@ -2,13 +2,13 @@ from circuits import Component
 from circuits.net.sockets import TCPClient, Connect, Disconnect
 from circuits.core import handler
 
-from steamedfish import SteamID, Util
-from steamedfish.steam3 import msg_base
-from steamedfish.steam3.steam_friends import SteamFriends
-from steamedfish.steam3.steam_protocol import SteamProtocol
-from steamedfish.steam3.steam_events import SendMessage, SetPersonaState
-from steamedfish.protobuf import steammessages_clientserver_pb2
-from steamedfish.steam_base import EMsg, EResult, EUniverse, EAccountType, EPersonaState
+from steamedrice import SteamID, Util
+from steamedrice.steam3 import msg_base
+from steamedrice.steam3.steam_friends import SteamFriends
+from steamedrice.steam3.steam_protocol import SteamProtocol
+from steamedrice.steam3.steam_events import SendProtocolMessage, SetPersonaState
+from steamedrice.protobuf import steammessages_clientserver_pb2
+from steamedrice.steam_base import EMsg, EResult, EUniverse, EAccountType, EPersonaState
 
 base_server_list = [('72.165.61.174', 27017), ('72.165.61.174', 27018)]
 
@@ -76,7 +76,7 @@ class SteamClient(Component):
         
         message.body.obfustucated_private_ip = 1111
 
-        self.fire(SendMessage(message))
+        self.fire(SendProtocolMessage(message))
 
     def get_sentry_file(self, username):
         return '.steam.sentry'

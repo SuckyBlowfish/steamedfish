@@ -1,13 +1,16 @@
 from circuits import Event
 
-# TODO: change to ProtocolMessage
-class Message(Event):
+class Connected(Event):
+    """
+    Fired when we successfully connect to steam servers and complete the encryption request
+    """
+
+class ProtocolMessage(Event):
     """
     Used for messages client-server messages
     """
 
-# TODO: change to SendProtocolMessage
-class SendMessage(Event):
+class SendProtocolMessage(Event):
     """
     Used for sending a protobuf message to steam servers
     """

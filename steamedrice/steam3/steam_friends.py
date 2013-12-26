@@ -1,11 +1,11 @@
-from steamedfish.protobuf import steammessages_clientserver_pb2
-from steamedfish.steamid import SteamID
-from steamedfish.steam3 import msg_base
-from steamedfish.steam_base import *
-from steamedfish.util import Util
+from steamedrice.protobuf import steammessages_clientserver_pb2
+from steamedrice.steamid import SteamID
+from steamedrice.steam3 import msg_base
+from steamedrice.steam_base import EMsg, EFriendRelationship, EPersonaState
+from steamedrice.util import Util
 from circuits import Component
 from circuits.core import handler
-from steam_events import *
+from steam_events import FriendMessage, SendProtocolMessage, FriendRequest
 
 get_msg = Util.get_msg
 
@@ -15,7 +15,7 @@ class User():
         self.steamid = steamid
         self.persona_state = persona_state
         self.person_state_flags = persona_state_flags
-        self.player_name = player_name
+        self.persona_name = persona_name
         self.friend_relationship = friend_relationship
         self.game_played_id = game_played_id
         self.game_played_name = game_played_name
@@ -30,14 +30,14 @@ class SteamFriends(Component):
         self.friends_list = {}
         self.local_user = User()
 
-    @handler('message')
-    def handle_message(self, emsg, msg):
+    @handler('protocol_message')
+    def handle_protocol_message(self, emsg, msg):
         if get_msg(emsg) == EMsg.ClientFriendMsgIncoming:
-            self._handleClientFriendMsgIncoming(msg)
+            self._handle_client_friend_msg_incoming(msg)
         elif get_msg(emsg) == EMsg.ClientFriendsList:
-            self._handleClientFriendsList(msg)
+            self._handle_client_friends_list(msg)
         elif get_msg(emsg) == EMsg.ClientAccountInfo:
-            self._handleClientAccountInfo(msg)
+            self._handle_client_account_info(msg)
 
     @handler('logged_on')
     def _logged_on(self, steamid):
@@ -48,7 +48,7 @@ class SteamFriends(Component):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientChangeStatus,
                 EMsg.ClientChangeStatus)
         message.body.persona_state = self.local_user.persona_state
-        self.fire(SendMessage(message), 'steam')
+        self.fire(SendProtocolMessage(message), 'steam')
 
     def set_player_name(self, player_name):
         self.local_user.player_name = player_name
@@ -56,7 +56,7 @@ class SteamFriends(Component):
                 EMsg.ClientChangeStatus)
         message.body.player_name = self.local_user.player_name
         message.body.persona_state = self.local_user.persona_state or EPersonaState.Offline
-        self.fire(SendMessage(message), 'steam')
+        self.fire(SendProtocolMessage(message), 'steam')
 
     def send_friend_message(self, steamid, chat_entry_type, msg):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientFriendMsg,
@@ -64,7 +64,7 @@ class SteamFriends(Component):
         message.body.steamid = steamid
         message.body.chat_entry_type = chat_entry_type
         message.body.message = msg
-        self.fire(SendMessage(message), 'steam')
+        self.fire(SendProtocolMessage(message), 'steam')
 
     def _handle_client_friend_msg_incoming(self, msg):
         message = msg_base.ProtobufMessage(steammessages_clientserver_pb2.CMsgClientFriendMsgIncoming,

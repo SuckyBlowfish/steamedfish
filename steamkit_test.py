@@ -1,8 +1,8 @@
 import sys
-from steamedfish.steam3 import SteamClient, SteamFriends
-from steamedfish.steam3.steam_events import SendFriendMessage, SetPersonaState
-from steamedfish.steam_base import EChatEntryType, EMsg, EPersonaState
-from steamedfish import Util
+from steamedrice.steam3 import SteamClient, SteamFriends
+from steamedrice.steam3.steam_events import SendFriendMessage, SetPersonaState
+from steamedrice.steam_base import EChatEntryType, EMsg, EPersonaState
+from steamedrice import Util
 from circuits import Debugger, Component
 from circuits.core import handler
 from chatterbotapi import ChatterBotFactory, ChatterBotType

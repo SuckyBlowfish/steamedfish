@@ -1,5 +1,5 @@
-from steamedfish.steam_base import EMsg
-from steamedfish import Util
+from steamedrice.steam_base import EMsg
+from steamedrice import Util
 
 from circuits import Component
 
@@ -20,7 +20,7 @@ class SteamLogger(Component):
         super(SteamLogger, self).__init__(*args, **kwargs)
         self.ignorelist = ignorelist
 
-    def message(self, emsg_real, msg):
+    def protocol_message(self, emsg_real, msg):
         emsg = get_msg(emsg_real)
         if emsg in self.ignorelist:
             return
@@ -32,7 +32,7 @@ class SteamLogger(Component):
         out += self.END
         print(out)
 
-    def send_message(self, msg):
+    def send_protocol_message(self, msg):
         emsg_real = msg.header.emsg
         emsg = get_msg(emsg_real)
         if emsg in self.ignorelist:
